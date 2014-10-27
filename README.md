@@ -26,4 +26,4 @@ Tutorials
 And Finally...
 --------------
 
-[I leave you with this](https://dl.dropboxusercontent.com/u/6213850/WebGL/nyanCat/nyan.html). Make sure you turn of your speakers.
+[I leave you with this](https://dl.dropboxusercontent.com/u/6213850/WebGL/nyanCat/nyan.html). Make sure you turn up your speakers.
