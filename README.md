@@ -20,8 +20,8 @@ Projects
 Tutorials
 ---------
 
+* [Getting Started with three.js](http://aerotwist.com/tutorials/getting-started-with-three-js/)
 * [Vertex Particles](http://aerotwist.com/tutorials/creating-particles-with-three-js/)
-* [Getting Started with three.js]
 
 And Finally...
 --------------
