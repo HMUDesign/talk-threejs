@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Getting Started with Three.js</title>    
+		<script src="../lib/three.min.js"></script>
+		<script>
+			// from https://github.com/mrdoob/three.js/wiki/Getting-Started
+			window.onload = function() {
+				// 1. Need a Renderer
+				var renderer = new THREE.WebGLRenderer();
+				renderer.setSize( 800, 600 );
+				document.body.appendChild( renderer.domElement );
+				
+				// 2. Need a Scene to render
+				var scene = new THREE.Scene();
+				
+				// 3. Need a Camera to render
+				var camera = new THREE.PerspectiveCamera(
+					35,             // Field of view
+					800 / 600,      // Aspect ratio
+					0.1,            // Near plane
+					10000           // Far plane
+				);
+				camera.position.set( -15, 10, 10 );
+				camera.lookAt( scene.position );
+				
+				// 4. Need a Mesh in the Scene
+				var geometry = new THREE.BoxGeometry( 5, 5, 5 );
+				var material = new THREE.MeshLambertMaterial({ color: 0xFF0000 });
+				var mesh = new THREE.Mesh( geometry, material );
+				scene.add( mesh );
+				
+				// 5. Need a Light so we can see the Scene
+				var light = new THREE.PointLight();
+				light.position.set( -8, 7, 10 );
+				scene.add( light );
+				
+				// 6. Finally, Render the Scene with the Camera using the Renderer
+				renderer.render( scene, camera );
+				
+				// Expose objects for Console manipulation
+				window.world = {
+					renderer: renderer,
+					scene: scene,
+					camera: camera,
+					mesh: mesh,
+					light: light,
+					render: function() {
+						renderer.render( scene, camera );
+					}
+				}
+			}
+		</script>
+	</head>
+	<body></body>
+</html>
