@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>three.js webgl - shader [Monjori]</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<style>
+			body { margin: 0; }
+			canvas { display: block; }
+		</style>
+		
+		<script type="text/javascript" src="../lib/three.min.js"></script>
+	</head>
+	<body>
+		<div id="container"></div>
+		
+		<script>
+			var uniforms = {
+				time: { type: "f", value: 1.0 },
+				resolution: { type: "v2", value: new THREE.Vector2() },
+				gradient: { type: "t",  value: THREE.ImageUtils.loadTexture('cycle.png') },
+			};
+			
+			var camera = new THREE.Camera();
+			var scene = new THREE.Scene();
+			var renderer = new THREE.WebGLRenderer();
+			
+			onWindowResize();
+			window.addEventListener('resize', onWindowResize, false);
+			
+			var shaders = {};
+			var loader = new THREE.XHRLoader();
+			loader.load('shaders/vertexPlain.c', function(shader) {
+				shaders.vertex = shader;
+			});
+			loader.load('shaders/fragmentPlasma.c', function(shader) {
+				shaders.fragment = shader;
+			});
+			
+			THREE.DefaultLoadingManager.onLoad = function() {
+				init();
+				update();
+			}
+			
+			function init() {
+				camera.position.z = 1;
+				
+				var container = document.getElementById('container');
+				container.appendChild(renderer.domElement);
+				
+				var geometry = new THREE.PlaneBufferGeometry(2, 2);
+				
+				var material = new THREE.ShaderMaterial({
+					uniforms: uniforms,
+					vertexShader: shaders.vertex,
+					fragmentShader: shaders.fragment,
+				});
+				
+				var mesh = new THREE.Mesh(geometry, material);
+				scene.add(mesh);
+			}
+			
+			function update() {
+				requestAnimationFrame(update);
+				
+				uniforms.time.value += 0.01;
+				renderer.render(scene, camera);
+			}
+			
+			function onWindowResize(event) {
+				uniforms.resolution.value.x = window.innerWidth;
+				uniforms.resolution.value.y = window.innerHeight;
+				renderer.setSize(uniforms.resolution.value.x, uniforms.resolution.value.y);
+			}
+		</script>
+	</body>
+</html>

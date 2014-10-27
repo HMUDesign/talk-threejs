@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>three.js webgl - shader [Monjori]</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<style>
+			body { margin: 0; }
+			canvas { display: block; }
+			#zoom { position: absolute; border: 1px solid white; }
+		</style>
+		
+		<script type="text/javascript" src="../lib/three.min.js"></script>
+	</head>
+	<body>
+		<div id="container">
+			<div id="zoom"></div>
+		</div>
+		
+		<script>
+			var uniforms = {
+				resolution: { type: "v2", value: new THREE.Vector2() },
+				gradient: { type: "t",  value: THREE.ImageUtils.loadTexture('rainbow.png') },
+				iterations: { type: "i", value: 150 },
+				center: { type: "v2", value: new THREE.Vector2(-.75,0) },
+				dimensions: { type: "v2", value: new THREE.Vector2(3, 2.5) },
+			};
+			
+			var camera = new THREE.Camera();
+			var scene = new THREE.Scene();
+			var renderer = new THREE.WebGLRenderer();
+			
+			var zoom = document.getElementById('zoom');
+			
+			window.addEventListener('resize', resize, false);
+			
+			window.addEventListener('mousedown', mousedown, false);
+			
+			var shaders = {};
+			var loader = new THREE.XHRLoader();
+			loader.load('shaders/fragmentMandelbrot.c', function(shader) {
+				shaders.fragment = shader;
+			});
+			
+			THREE.DefaultLoadingManager.onLoad = function() {
+				init();
+				resize();
+			}
+			
+			function init() {
+				camera.position.z = 1;
+				
+				var container = document.getElementById('container');
+				container.appendChild(renderer.domElement);
+				
+				var geometry = new THREE.PlaneBufferGeometry(2, 2);
+				var material = new THREE.ShaderMaterial({
+					uniforms: uniforms,
+					fragmentShader: shaders.fragment,
+				});
+				
+				var mesh = new THREE.Mesh(geometry, material);
+				scene.add(mesh);
+			}
+			
+			function update() {
+				renderer.render(scene, camera);
+			}
+			
+			function resize() {
+				uniforms.resolution.value.x = window.innerWidth;
+				uniforms.resolution.value.y = window.innerHeight;
+				
+				renderer.setSize(uniforms.resolution.value.x, uniforms.resolution.value.y);
+				update();
+			}
+			
+			function mousedown(e) {
+				zoom.style.left = e.x + 'px';
+				zoom.style.top = e.y + 'px';
+				zoom.style.width = null;
+				zoom.style.height = null;
+				
+				window.addEventListener('mousemove', mousemove, false);
+				window.addEventListener('mouseup', mouseup, false);
+			}
+			function mousemove(e) {
+				zoom.style.width = (e.x - zoom.offsetLeft) + 'px';
+				zoom.style.height = (e.y - zoom.offsetTop) + 'px';
+			}
+			function mouseup(e) {
+				window.removeEventListener('mousemove', mousemove);
+				window.removeEventListener('mouseup', mouseup);
+				
+				var scale = Math.max(uniforms.dimensions.value.x / uniforms.resolution.value.x, uniforms.dimensions.value.y / uniforms.resolution.value.y);
+				
+				uniforms.center.value.x =                                                    (zoom.offsetLeft + zoom.offsetWidth  / 2) * scale + uniforms.center.value.x - scale * uniforms.resolution.value.x / 2;
+				uniforms.center.value.y = ((uniforms.resolution.value.y - zoom.offsetTop - zoom.offsetHeight) + zoom.offsetHeight / 2) * scale + uniforms.center.value.y - scale * uniforms.resolution.value.y / 2;
+				
+				uniforms.dimensions.value.x *= zoom.offsetWidth / uniforms.resolution.value.x;
+				uniforms.dimensions.value.y *= zoom.offsetHeight / uniforms.resolution.value.y;
+				
+				update();
+			}
+		</script>
+	</body>
+</html>
