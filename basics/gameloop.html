@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Getting Started with Three.js</title>    
+		<script src="../lib/three.min.js"></script>
+		<script>
+			/**
+			 * Projects Variables
+			 * Normally, these would be encasulated within an Instance
+			 */
+			
+			var renderer, scene, camera;
+			var mesh, light;
+			
+			/**
+			 * Initialize the Project
+			 */
+			function init() {
+				renderer = new THREE.WebGLRenderer();
+				renderer.setSize( 800, 600 );
+				document.body.appendChild( renderer.domElement );
+				
+				scene = new THREE.Scene();
+				
+				camera = new THREE.PerspectiveCamera(35, 800 / 600, 0.1, 10000);
+				camera.position.set( 0, 10, 15 );
+				camera.lookAt(scene.position);
+			}
+			
+			/**
+			 * Build the Scene
+			 */
+			function build() {
+				var geometry = new THREE.BoxGeometry(5, 5, 5);
+				var material = new THREE.MeshLambertMaterial({ color: 0xFF0000 });
+				mesh = new THREE.Mesh(geometry, material);
+				scene.add(mesh);
+				
+				light = new THREE.PointLight();
+				light.position.set(0, 7, 10);
+				scene.add(light);
+			}
+			
+			/**
+			 * Update Objects in the Scene
+			 */
+			function tick(delta, time) {
+				mesh.rotation.y += delta * Math.PI / 4;
+				light.position.x = 10 * Math.sin(time * Math.PI);
+			}
+			
+			/**
+			 * Browser Event
+			 */
+			window.onload = function() {
+				init();
+				build();
+				
+				function render(T) {
+					requestAnimationFrame(render);
+					
+					tick((T - _T) / 1000, T / 1000);
+					renderer.render(scene, camera);
+					
+					_T = T;
+				}
+				
+				var _T = 0;
+				render(0);
+			}
+		</script>
+	</head>
+	<body></body>
+</html>
