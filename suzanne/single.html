@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>three.js webgl - performance</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<style>
+			body {
+				background:#fff;
+				padding:0;
+				margin:0;
+				font-weight: bold;
+				overflow:hidden;
+			}
+		</style>
+		<script src="../lib/three.min.js"></script>
+		<script src="../lib/stats.min.js"></script>
+	</head>
+	<body>
+		<script>
+			var stats;
+			var camera, scene, renderer;
+			var mesh;
+			
+			init();
+			animate();
+			
+			function init() {
+				var container = document.createElement( 'div' );
+				document.body.appendChild( container );
+				
+				scene = new THREE.Scene();
+				
+				camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 10000 );
+				camera.position.z = 5;
+				camera.lookAt(scene.position);
+				
+				var loader = new THREE.JSONLoader();
+				loader.load( '../lib/models/suzanne.json', function ( geometry ) {
+					geometry.computeVertexNormals();
+					
+					var material = new THREE.MeshNormalMaterial( { shading: THREE.SmoothShading } );
+					mesh = new THREE.Mesh( geometry, material );
+					
+					mesh.rotation.x = Math.PI / 2;
+					
+					scene.add( mesh );
+				} );
+				
+				renderer = new THREE.WebGLRenderer();
+				renderer.setClearColor( 0xffffff, 1 );
+				renderer.setSize( window.innerWidth, window.innerHeight );
+				container.appendChild( renderer.domElement );
+				
+				stats = new Stats();
+				stats.domElement.style.position = 'absolute';
+				stats.domElement.style.top = '0px';
+				stats.domElement.style.zIndex = 100;
+				container.appendChild( stats.domElement );
+				
+				window.addEventListener( 'resize', onWindowResize, false );
+			}
+			
+			function onWindowResize() {
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+				
+				renderer.setSize( window.innerWidth, window.innerHeight );
+			}
+			
+			function animate() {
+				requestAnimationFrame( animate );
+				
+				render();
+				stats.update();
+			}
+			
+			function render() {
+				if(!mesh) return;
+				
+				mesh.rotation.z += 0.02;
+				renderer.render( scene, camera );
+			}
+		</script>
+	</body>
+</html>
