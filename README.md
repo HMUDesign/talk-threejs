@@ -8,6 +8,7 @@ Examples
 * [Dynamic Prodecural Terrain](http://threejs.org/examples/webgl_terrain_dynamic.html)
 * [Small Arms and Ammunition - Imports and Exports](http://armsglobe.chromeexperiments.com/)
 * [WebGL Globe](http://globe.chromeexperiments.com/)
+* [Complex Plasma Shader](http://threejs.org/examples/webgl_shader.html)
 
 Projects
 --------
